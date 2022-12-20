@@ -38,7 +38,7 @@ async def on_member_join(member):
 @bot.slash_command(description="Get the Link to donate!!!!")
 async def linkylink(ctx):
   embed = discord.Embed(title="Robotibot",description='Donation Link',color=0x42f55d)
-  embed.add_field(name='Donate',value="[**Here**](https://roboticraft.nanmuhongye.repl.co)")
+  embed.add_field(name='Donate',value="[**Here**](https://roboticraft.nanmuhongye.repl.co/home)")
   await ctx.respond(embed=embed)
   
 #for playing pong with the bot
