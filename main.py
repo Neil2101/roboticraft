@@ -15,9 +15,9 @@ equationlist = []
 n = 1
 #bot client __init__
 bot = discord.Bot(debug_guilds=[979939493681438751, 992992643028095006])
-#hail for funni
-max_chance_to_hail = 10
-amt_msg_to_hail = random.randint(1, max_chance_to_hail - 1)
+#string and stuff
+enter = """
+"""
 #intents
 intents = discord.Intents.all()
 bot = discord.Bot(guild_ids=['979939493681438751'], intents=intents)
@@ -36,7 +36,13 @@ async def on_member_join(member):
 
 
 #a link to sussy amogus website
-@bot.slash_command(description="Get the Link to donate!!!!")
+@bot.command(description="Suggests an Idea. Minty or max will read it once a week")
+async def suggest(ctx, idea:str):
+  with open('Ideas.txt', "w") as myfile:
+    myfile.write("Name: " + str(ctx.author) + " Idea: " + idea + enter)
+    myfile.close()
+  await ctx.respond("Done!")
+@bot.command(description="Get the Link to donate!!!!")
 async def linkylink(ctx):
   embed = discord.Embed(title="Robotibot",
                         description='Donation Link',
@@ -54,10 +60,7 @@ async def latency(ctx):
 
 
 #haha screw you your getting rickrolled
-@bot.command(
-  description=
-  "Sings Rick Asley's Never gonna give you up with you (suggested by Tanda2e5#9606)"
-)
+@bot.command(description="Sings Rick Asley's Never gonna give you up with you (suggested by Tanda2e5#9606)")
 async def never(ctx):
   global n
   if n == 1:
