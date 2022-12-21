@@ -4,8 +4,10 @@ import discord
 import random
 from discord.ui import Button, View
 from keep_alive import keep_alive
-global equationlist
+from threading import Thread as thread
 import discord.ext.commands
+global equationlist
+
 #variables
 #equationlist is used for the calculator app to store a equation
 equationlist = []
@@ -135,7 +137,7 @@ def calculator(Input_List):
 class CalculatorButton(Button):
   try:
     global equation
-    equation = "0"
+    equation = ""
 
     def __init__(self, number, style=discord.ButtonStyle.gray):
       super().__init__(label=number, style=style)
@@ -153,7 +155,8 @@ class CalculatorButton(Button):
         await interaction.message.edit(content=equation)
       if self.label == "Done":
         print(equationlist)
-        await CalculatorButton.callback(self, interaction)
+        await CalculatorButton.callback(self,interaction)
+        #calculator rendering engine
         await interaction.message.edit(content=calculator(equationlist))
   except:
     pass
@@ -173,15 +176,24 @@ async def calculate(ctx):
   calcbuttons.append(CalculatorButton("*", discord.ButtonStyle.blurple))
   calcbuttons.append(CalculatorButton("Clear", discord.ButtonStyle.red))
   calcbuttons.append(CalculatorButton("Done", discord.ButtonStyle.green))
+  #button rendering engine
   for i in calcbuttons:
     view.add_item(i)
-  await ctx.respond("0", view=view)
+  await ctx.respond("_", view=view)
 
 #runs the bot
 Token = os.environ['TOKEN']
-bot.run(Token)
-keep_alive()
+def a():
+  bot.run(Token)
+def b():
+  keep_alive()
 
+botthread=thread(target=a)
+webthread=thread(target=b)
+botthread.start()
+webthread.start()
+
+  
 #haha screw you you aren't getting the botmaker role haha
 """@bot.slash_command(description="get the bot creator role")
 async def botmaker(ctx,person:discord.Member):
