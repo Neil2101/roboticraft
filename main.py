@@ -2,10 +2,13 @@
 import os
 import discord
 import random
+import discord.ext.commands
+import Calculator
 from discord.ui import Button, View
 from keep_alive import keep_alive
 from threading import Thread as thread
-import discord.ext.commands
+
+
 global equationlist
 
 #variables
@@ -38,8 +41,8 @@ async def on_member_join(member):
 #a link to sussy amogus website
 @bot.command(description="Suggests an Idea. Minty or max will read it once a week")
 async def suggest(ctx, idea:str):
-  with open('Ideas.txt', "w") as myfile:
-    myfile.write("Name: " + str(ctx.author) + " Idea: " + idea + enter)
+  with open('Ideas.txt', "a") as myfile:
+    myfile.write("Name: " + str(ctx.author) + " Idea: " + idea + "\n")
     myfile.close()
   await ctx.respond("Done!")
 @bot.command(description="Get the Link to donate!!!!")
@@ -80,8 +83,6 @@ async def never(ctx):
     n = 0
   n += 1
 
-
-#broken calculator... welp
 async def is_owner(ctx):
   return ctx.author.id == 725875148938412104 or ctx.author.id == 560446547989626920
 @bot.command(description="Grants someone the suggestor role... purely cosmetic")
@@ -92,109 +93,26 @@ async def grant_suggestor(ctx, user: discord.Member):
   await member.add_roles(role)
   await ctx.respond("Done!")
 
-
-
-def calculator(Input_List):
-  try:
-    global numvar1
-    global numvar2
-    global signal
-    numvar1 = ""
-    numvar2 = ""
-    if "+" in Input_List:
-      signpos = int(Input_List.index("+"))
-      for i in range(0, signpos):
-        numvar1 = numvar1 + Input_List[i]
-      for i in range(signpos + 1, len(Input_List)):
-        numvar2 = numvar2 + Input_List[i]
-    return int(numvar1) + int(numvar2)
-    if "-" in Input_List:
-      signpos = int(Input_List.index("-"))
-      for i in range(0, signpos):
-        numvar1 = numvar1 + Input_List[i]
-      for i in range(signpos + 1, len(Input_List)):
-        numvar2 = numvar2 + Input_List[i]
-    return int(numvar1) - int(numvar2)
-    if "*" in Input_List:
-      signpos = int(Input_List.index("*"))
-      for i in range(0, signpos):
-        numvar1 = numvar1 + Input_List[i]
-      for i in range(signpos + 1, len(Input_List)):
-        numvar2 = numvar2 + Input_List[i]
-    return int(numvar1) * int(numvar2)
-    if "/" in Input_List:
-      signpos = int(Input_List.index("/"))
-      for i in range(0, signpos):
-        numvar1 = numvar1 + Input_List[i]
-      for i in range(signpos + 1, len(Input_List)):
-        numvar2 = numvar2 + Input_List[i]
-    return int(numvar1) / int(numvar2)
-    equationlist.clear()
-  except Exception as e:
-    print(e)
-    return "No Answer, If you did a valid calculation, please contact the owner of this bot at Mintysharky#1496 and send him the dev stuff | DEV STUFF: " + str(
-      e)
-
-
-#just automate the making of buttons
-class CalculatorButton(Button):
-  try:
-    global equation
-    equation = ""
-
-    def __init__(self, number, style=discord.ButtonStyle.gray):
-      super().__init__(label=number, style=style)
-
-    async def callback(self, interaction):
-      global equation
-      if not self.label == "Done":
-        equationlist.append(str(self.label))
-        for i in equationlist:
-          equation += str(i)
-          await interaction.message.edit(content=equation)
-          equation = ""
-      if self.label == "Clear":
-        equationlist.clear()
-        await interaction.message.edit(content=equation)
-      if self.label == "Done":
-        print(equationlist)
-        await CalculatorButton.callback(self,interaction)
-        #calculator rendering engine
-        await interaction.message.edit(content=calculator(equationlist))
-  except:
-    pass
-
-
 #the actual calculator
 @bot.command(
   description="Calculates something (+,-,/,*) One instance at a time[BETA]")
 async def calculate(ctx):
-  calcbuttons = []
-  view = View()
-  for i in range(0, 10):
-    calcbuttons.append(CalculatorButton(i))
-  calcbuttons.append(CalculatorButton("+", discord.ButtonStyle.blurple))
-  calcbuttons.append(CalculatorButton("-", discord.ButtonStyle.blurple))
-  calcbuttons.append(CalculatorButton("/", discord.ButtonStyle.blurple))
-  calcbuttons.append(CalculatorButton("*", discord.ButtonStyle.blurple))
-  calcbuttons.append(CalculatorButton("Clear", discord.ButtonStyle.red))
-  calcbuttons.append(CalculatorButton("Done", discord.ButtonStyle.green))
-  #button rendering engine
-  for i in calcbuttons:
-    view.add_item(i)
-  await ctx.respond("_", view=view)
+  await Calculator.calculate(ctx)
 
-#runs the bot
-Token = os.environ['TOKEN']
-def a():
-  bot.run(Token)
-def b():
-  keep_alive()
+kl2 = os.environ["TOKEN"]
 
-botthread=thread(target=a)
-webthread=thread(target=b)
-botthread.start()
-webthread.start()
+try:
+  def botloop():
+    try:
+      bot.run(kl2)
+    except Exception as e:
+      print(f"Something went wrong... {e}")
+  botloopthread = thread(target=botloop)
+  keepalivethread= thread(target=keep_alive)
+  botloopthread.start()
+  keepalivethread.start()
+except Exception as e:
+  print(f"Something went wrong... {e}")
 
   
 #haha screw you you aren't getting the botmaker role haha
